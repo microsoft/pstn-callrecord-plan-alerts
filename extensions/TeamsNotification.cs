@@ -6,7 +6,6 @@ using Microsoft.Bot.Schema;
 using Newtonsoft.Json;
 using System.Text;
 using Microsoft.Extensions.Logging;
-using System.Reflection;
 
 namespace callRecords.Extensions
 {

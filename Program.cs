@@ -9,6 +9,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Azure.WebJobs;
 using System.Reflection;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 using ExecutionContext = Microsoft.Azure.WebJobs.ExecutionContext;
 
 namespace callRecords
@@ -31,10 +33,21 @@ namespace callRecords
             var callLogRows = new PstnLogCallRows();
             List<CallDetails> CallUsageTotals = new List<CallDetails>(16);
 
-            // Initialize Configuration object
+            // Initialize Configuration object using Environment Variables and User Secrets
             var builder = new ConfigurationBuilder()
                 .AddUserSecrets(Assembly.GetExecutingAssembly(),true)
-                .AddEnvironmentVariables();
+                .AddEnvironmentVariables(false)
+                .AddAzureKeyVault(
+                    new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"),
+                    new DefaultAzureCredential(),
+                    new AzureKeyVaultConfigurationOptions
+                    {
+                        // Only pull secrets with the prefix "pstn-callrecord-plan-alerts-"
+                        // Note: Useful in shared keyvaults
+                        Prefix = "pstn-callrecord-plan-alerts-"
+                    },
+                    true
+                    );
             var configurationRoot = builder.Build();
             var GenConfig = configurationRoot.Get<GENConfig>();
 

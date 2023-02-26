@@ -12,7 +12,7 @@ namespace callRecords.Extensions
 
     public static class TeamsNotification
 {
-        public static async Task SendAdaptiveCardWithTemplating(List<CallDetails> callDetails, GENConfig gENConfig, ILogger log)
+        public static async Task SendAdaptiveCardWithTemplating(List<CallDetails> callDetails, GENConfig gENConfig, KVSecrets kvConfig, ILogger log)
         {
             string teamsNotificationCardFile = Path.Combine(PSTNCallrecordPplanAlertsDailyTrigger.baseFunctionsFolder, 
                                                "extensions", 
@@ -50,7 +50,7 @@ namespace callRecords.Extensions
             {
             using (var HttpClient = new HttpClient())
             {
-                var response = await HttpClient.PostAsync(gENConfig.TeamsWebHook, content).ConfigureAwait(false);
+                var response = await HttpClient.PostAsync(kvConfig.TeamsWebHook, content).ConfigureAwait(false);
 
                 if (!response.IsSuccessStatusCode)
                 {

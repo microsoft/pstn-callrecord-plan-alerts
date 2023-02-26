@@ -12,6 +12,8 @@ using System.Reflection;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using ExecutionContext = Microsoft.Azure.WebJobs.ExecutionContext;
+using Microsoft.Extensions.Configuration.AzureKeyVault;
+using Azure.Extensions.AspNetCore.Configuration.Secrets;
 
 namespace callRecords
 {
@@ -36,26 +38,21 @@ namespace callRecords
             // Initialize Configuration object using Environment Variables and User Secrets
             var builder = new ConfigurationBuilder()
                 .AddUserSecrets(Assembly.GetExecutingAssembly(),true)
-                .AddEnvironmentVariables(false)
-                .AddAzureKeyVault(
-                    new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"),
-                    new DefaultAzureCredential(),
-                    new AzureKeyVaultConfigurationOptions
-                    {
-                        // Only pull secrets with the prefix "pstn-callrecord-plan-alerts-"
-                        // Note: Useful in shared keyvaults
-                        Prefix = "pstn-callrecord-plan-alerts-"
-                    },
-                    true
-                    );
-            var configurationRoot = builder.Build();
-            var GenConfig = configurationRoot.Get<GENConfig>();
+                .AddEnvironmentVariables()
+                .Build();
+            var GenConfig = builder.Get<GENConfig>();
+
+            var secretManager = new KeyVaultSecretManager();
+            var kvBuilder = new ConfigurationBuilder()
+                .AddAzureKeyVault( new Uri($"https://{GenConfig.KeyVaultName}.vault.azure.net/"), new DefaultAzureCredential(true), secretManager)
+                .Build();
+            var kvConfig = kvBuilder.Get<KVSecrets>();
 
             // Start Authentication...
             string[] scopes = new string[] { "https://graph.microsoft.com/.default" };
-            var app = ConfidentialClientApplicationBuilder.Create(GenConfig.ClientID)
-                                                    .WithClientSecret(GenConfig.ClientSecret)
-                                                    .WithAuthority(new Uri(string.Format("https://login.microsoftonline.com/{0}", GenConfig.TenantID)))
+            var app = ConfidentialClientApplicationBuilder.Create(kvConfig.ClientID)
+                                                    .WithClientSecret(kvConfig.ClientSecret)
+                                                    .WithAuthority(new Uri(string.Format("https://login.microsoftonline.com/{0}", kvConfig.TenantID)))
                                                     .Build();
 
             try
@@ -159,10 +156,10 @@ namespace callRecords
                         switch (GenConfig.NotificationType)
                         {
                             case "Teams":
-                                    TeamsNotification.SendAdaptiveCardWithTemplating(CallUsageTotals,GenConfig,log).ConfigureAwait(false).GetAwaiter().GetResult();
+                                    TeamsNotification.SendAdaptiveCardWithTemplating(CallUsageTotals,GenConfig,kvConfig, log).ConfigureAwait(false).GetAwaiter().GetResult();
                                     break; 
                             case "Console":
-                                    ConsoleNotification.WriteToConsole(CallUsageTotals,GenConfig,log).ConfigureAwait(false).GetAwaiter().GetResult();
+                                    ConsoleNotification.WriteToConsole(CallUsageTotals,GenConfig, kvConfig,log).ConfigureAwait(false).GetAwaiter().GetResult();
                                     break;
                         }
 

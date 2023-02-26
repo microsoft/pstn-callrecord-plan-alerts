@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 namespace callRecords.Models
 {
     /// <summary>
@@ -5,11 +6,9 @@ namespace callRecords.Models
     /// </summary>
     public  class GENConfig
     {
+        public string KeyVaultName { get; set; }
         public string NotificationType { get; set; }
         public int ThresholdLimit { get; set; }
-        public string TeamsWebHook {get; set; }
-        public string ClientID { get; set; }
-        public string ClientSecret { get; set; }
-        public string TenantID {get; set; }
+                
     }
 }

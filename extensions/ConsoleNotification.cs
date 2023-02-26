@@ -12,7 +12,7 @@ namespace callRecords.Extensions
 
     public static class ConsoleNotification
 {
-        public static async Task WriteToConsole(List<CallDetails> callDetails, GENConfig gENConfig,ILogger log)
+        public static async Task WriteToConsole(List<CallDetails> callDetails, GENConfig gENConfig, KVSecrets kvConfig,ILogger log)
         {
            int row = 1;
            

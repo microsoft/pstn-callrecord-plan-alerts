@@ -7,6 +7,7 @@ namespace callRecords.Models
     public  class KVSecrets
     {
         
+       [JsonPropertyName("TeamsWebHook")]
        public string TeamsWebHook {get; set; }
         
        public string ClientID { get; set; }

@@ -43,6 +43,7 @@ namespace callRecords
             var GenConfig = builder.Get<GENConfig>();
 
             var secretManager = new KeyVaultSecretManager();
+            
             var kvBuilder = new ConfigurationBuilder()
                 .AddAzureKeyVault( new Uri($"https://{GenConfig.KeyVaultName}.vault.azure.net/"), new DefaultAzureCredential(true), secretManager)
                 .Build();

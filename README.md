@@ -73,6 +73,7 @@
     - Deplyment Center - App Service Build Service
     - Deplyment Center - Github Actions Build/Deploy
     - As a Zip Package Depolyment that you build through a pipeline or external dev machine
+    - Deploy using SSH and Github Deploy Keys + Github Org WebHooks
   
     **Details on which option to choose:**
       - [Deployment Best Practices](https://learn.microsoft.com/en-us/azure/app-service/deploy-best-practices)

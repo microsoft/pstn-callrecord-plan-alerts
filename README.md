@@ -27,13 +27,24 @@
 
 ![image info](./images/3.png) 
 
-1. Create Resource Group
+3. Create Incoming Webhook (Optional)
+
+    - Create a new incoming web hook in the connectors section of your Teams Channel
+    ![image info](./images/15.a.png) 
+    - While Creating the connector, Use the Image in this repo to set the Connector image under: .\incoming-webhook-image
+    ![image info](./images/15.b.png) 
+    - Take note of the webhook hook url (^^^) and save it for later step "Configuration" for the "TeamsWebHook" property of the Function app
+    - As a sample, You will see a Team Card displayed that will look like the following whenthe function has started:
+    ![image info](./images/15.c.png) 
+
+
+4. Create Resource Group
 
     navigate to http://portal.azure.com and Create a Resource Group in the appropriate region
 
     ![image info](./images/9.png) 
 
-2. Create Azure Function
+5. Create Azure Function
 
     Select the Market place template for Function App
     
@@ -54,7 +65,19 @@
     
     ![image info](./images/11.d.png) 
 
-3. Configuration
+6. Deploy Code to Azure Function
+
+    You have a choice depending on the method you choose to deploy the code to your azure function. Details are outlined below. 
+        
+    You can Deploy your code via:
+    - Deplyment Center - App Service Build Service
+    - Deplyment Center - Github Actions Build/Deploy
+    - As a Zip Package Depolyment that you build through a pipeline or external dev machine
+  
+    **Details on which option to choose:**
+      - [Deployment Best Practices](https://learn.microsoft.com/en-us/azure/app-service/deploy-best-practices)
+    
+7. Configuration
 
     Navigate to the Function App-->Settings-->Configuration
     
